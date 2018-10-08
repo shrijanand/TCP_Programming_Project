@@ -11,6 +11,8 @@ This README exists for the TCP Programming Project for CSCI 450: Data Communicat
 
 * Create Repo and initialize README.md
 * ---- First README.md added to TCP_Programming_Project at October 2 at 18:30
+* Create Server.c and Client.c Source Code Files
+* ---- Added Server.c and Client.c Source Code Files to Repo. Working on MVP Commit
 
 ### Placeholder Title ###
 * Placeholder Content
