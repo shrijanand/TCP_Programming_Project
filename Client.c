@@ -109,6 +109,29 @@ unsigned char* Create_Message(const char* File_Path, const char* File_Name, uint
     return Message;
 }
 
+int Write_Socket(int File_Descriptor, void* Data , int Data_Size)
+{
+    while (Data_Size != 0)
+    {
+        int Write_Bytes = write(File_Descriptor, Data, Data_Size);
+
+        if (Write_Bytes < 0)
+        {
+
+            if (errno == EINTR)
+            {
+                Write_Bytes  = 0;
+            }
+
+            perror(strerror(errno));
+            exit(-1);
+        }
+
+        Data_Size -= Write_Bytes;
+        Data += Write_Bytes;
+    }
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -145,6 +168,8 @@ int main(int argc, char const *argv[])
   uint64_t Message_Size = Get_Message_Size(File_Path, argv[5], Format);
 
   unsigned char* Message = Create_Message(File_Path, argv[5], Format);
+
+  Write_Socket(Client_Socket, Message, Message_Size);
 
   return 0;
 }
