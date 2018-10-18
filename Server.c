@@ -356,6 +356,42 @@ void Write_File_Unchanged(unsigned char* Current_Position, unsigned char* File_S
     }
 }
 
+void Write_File_First_Second(unsigned char* Current_Position, unsigned char* File_Stop, FILE* File)
+{
+    while (Current_Position < File_Stop)
+    {
+        uint8_t Format_Type = *Current_Position++;
+
+        if (Format_Type == 0)
+        {
+            uint8_t Count = *Current_Position++;
+            fprintf(File, "%s ", Convert_Three_Byte_String(Count));
+
+            for (int i = 0; i < Count - 1; i++)
+            {
+                fprintf(File, "%d,", Read_INT16(&Current_Position));
+            }
+
+            fprintf(File, "%d\n", Read_INT16(&Current_Position));
+        }
+        else if (Format_Type == 1)
+        {
+            char Count[3 + 1];
+            Count[3] = '\0';
+            memcpy(Count, Current_Position, 3);
+            fprintf(File, "%s ", Count);
+            Current_Position += 3;
+
+            while (!Check_Valid_Format(*Current_Position))
+            {
+                fprintf(File, "%c", *Current_Position++);
+            }
+
+            fprintf(File, "%c", '\n');
+        }
+    }
+}
+
 void Write_File(uint8_t Translation_Type, unsigned char* File, uint64_t Size_of_File, unsigned char* Name_of_File)
 {
 
@@ -372,6 +408,11 @@ void Write_File(uint8_t Translation_Type, unsigned char* File, uint64_t Size_of_
     if (Translation_Type == 0)
     {
         Write_File_Unchanged(File, File_Stop, Output);
+    }
+
+    else if (Translation_Type == 1)
+    {
+        Write_File_First_Second(File, File_Stop, Output);
     }
 
     fclose(Output);
