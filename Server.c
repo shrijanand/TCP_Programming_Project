@@ -259,6 +259,28 @@ bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
     return Current_Position == End_Position;
 }
 
+int Write_Socket(int File_Descriptor, void* Data , int Data_Size)
+{
+    while (Data_Size != 0)
+    {
+        int Written_Bytes = write(File_Descriptor, Data, Data_Size);
+
+        if (Written_Bytes < 0)
+        {
+            if (errno == EINTR)
+            {
+                Written_Bytes  = 0;
+            }
+
+            perror(strerror(errno));
+            exit(-1);
+        }
+
+        Data_Size -= Written_Bytes;
+        Data += Written_Bytes;
+    }
+}
+
 void Start_Server(int Server_Socket) 
 {
     if (listen(Server_Socket, 3) < 0) 
@@ -285,6 +307,14 @@ void Start_Server(int Server_Socket)
             unsigned char* File_Start = Message.File;
             unsigned char* File_Stop = Message.File + Message.Size_of_File;
             bool Is_Valid = Test_Format(File_Start, File_Stop);
+            if (Is_Valid)
+            {
+                Write_Socket(Client_Init, "Success", sizeof("Success"));
+            }
+            else
+            {
+                Write_Socket(Client_Init, "Format error", sizeof("Format error"));
+            }
         
         if (close(Client_Init) < 0) 
         {
