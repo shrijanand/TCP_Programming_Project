@@ -147,6 +147,27 @@ int Create_Server(uint16_t Port_Number)
     return Server_Init;
 }
 
+bool Check_Valid_Format(unsigned char Format_Type)
+{
+    return Format_Type == 0 || Format_Type == 1;
+}
+
+bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
+{
+    while (Current_Position < End_Position) 
+    {
+        uint8_t Format_Type = *Current_Position++;
+
+        if (!Check_Valid_Format(Format_Type)) 
+        { 
+        	return false; 
+        }
+        
+    }
+
+    return Current_Position == End_Position;
+}
+
 void Start_Server(int Server_Socket) 
 {
     if (listen(Server_Socket, 3) < 0) 
@@ -172,6 +193,7 @@ void Start_Server(int Server_Socket)
             Message_Struct Message = Get_Message(Client_Init);
             unsigned char* File_Start = Message.File;
             unsigned char* File_Stop = Message.File + Message.Size_of_File;
+            bool Is_Valid = Test_Format(File_Start, File_Stop);
         
         if (close(Client_Init) < 0) 
         {
