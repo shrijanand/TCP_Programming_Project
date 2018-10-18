@@ -120,8 +120,43 @@ Message_Struct Get_Message(int File_Descriptor)
     return Message;
 }
 
+int Create_Server(uint16_t Port_Number)
+{
+    int Server_Init = 0;
+
+    if ((Server_Init = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+         char * Error_Text = strerror(errno);
+         perror(Error_Text);
+         exit(-1);
+    }
+
+    struct sockaddr_in Server_Address;
+    Server_Address.sin_family = AF_INET;
+    Server_Address.sin_addr.s_addr = htonl(INADDR_ANY);
+    Server_Address.sin_port = htons(Port_Number);
+
+
+    if (bind(Server_Init, (struct sockaddr *) &Server_Address, sizeof(Server_Address)) < 0) 
+    {
+        char * Error_Text = strerror(errno);
+        perror(Error_Text);
+        exit(-1);
+    }
+
+    return Server_Init;
+}
+
 // Main function
 int main(int argc, char *argv[]) 
 {
+	if (argc < 2)
+	{
+		fprintf(stderr, "Error: Kindly check that a port is provided. \n");
+		exit(1);
+	}
+
+	int Server_Socket = Create_Server(atoi(argv[1]));
+
 	return 0;
 }
