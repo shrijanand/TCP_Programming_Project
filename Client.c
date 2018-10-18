@@ -62,7 +62,7 @@ int main(int argc, char const *argv[])
 
   if (File_Empty(File_Path))
   {
-      fprintf(stderr, "ERROR, FILE IS EMPTY\n");
+      fprintf(stderr, "Error: Kindly check that the file is not empty.\n");
       exit(1);
   }
 
