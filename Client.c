@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/Client_Socket.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -181,11 +181,11 @@ int main(int argc, char const *argv[])
   }
 
   int Client_Socket = Create_Socket(argv[1], argv[2]);
-
+  
   uint64_t Message_Size = Get_Message_Size(File_Path, argv[5], Format);
-
+  
   unsigned char* Message = Create_Message(File_Path, argv[5], Format);
-
+  
   Write_Socket(Client_Socket, Message, Message_Size);
   char* Response = Read_Response(Client_Socket, 50);
 
