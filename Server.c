@@ -147,6 +147,41 @@ int Create_Server(uint16_t Port_Number)
     return Server_Init;
 }
 
+void Start_Server(int Server_Socket) 
+{
+    if (listen(Server_Socket, 3) < 0) 
+    {
+        char * Error_Text = strerror(errno);
+        perror(Error_Text);
+        exit(-1);
+    }
+
+    struct sockaddr_in Client_Address;
+    int Size_of_Address = sizeof(Client_Address);
+    int Client_Init = 0;
+
+    while (1) 
+    {
+        if ((Client_Init = accept(Server_Socket, (struct sockaddr*) &Client_Address, &Size_of_Address)) < 0) 
+        {
+            char * Error_Text = strerror(errno);
+            perror(Error_Text);
+            exit(-1);
+        }
+
+            Message_Struct Message = Get_Message(Client_Init);
+            unsigned char* File_Start = Message.File;
+            unsigned char* File_Stop = Message.File + Message.Size_of_File;
+        
+        if (close(Client_Init) < 0) 
+        {
+            char * Error_Text = strerror(errno);
+            perror(Error_Text);
+            exit(-1);
+        }
+    }
+}
+
 // Main function
 int main(int argc, char *argv[]) 
 {
@@ -157,6 +192,8 @@ int main(int argc, char *argv[])
 	}
 
 	int Server_Socket = Create_Server(atoi(argv[1]));
+
+	Start_Server(Server_Socket);
 
 	return 0;
 }
