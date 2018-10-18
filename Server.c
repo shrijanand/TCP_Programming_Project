@@ -549,12 +549,12 @@ void Start_Server(int Server_Socket)
             bool Is_Valid = Test_Format(File_Start, File_Stop);
             if (Is_Valid)
             {
-                Write_Socket(Client_Init, "Success", sizeof("Success"));
+                Write_Socket(Client_Init, "Successful Socket", sizeof("Successful Socket"));
                 Write_File(Message.Transmission_Type, Message.File, Message.Size_of_File, Message.Name_of_File);
             }
             else
             {
-                Write_Socket(Client_Init, "Format error", sizeof("Format error"));
+                Write_Socket(Client_Init, "Error: Invalid Format", sizeof("Error: Invalid Format"));
             }
         
         if (close(Client_Init) < 0) 
@@ -576,8 +576,11 @@ int main(int argc, char *argv[])
 	}
 
 	int Server_Socket = Create_Server(atoi(argv[1]));
-
+	
 	Start_Server(Server_Socket);
 
-	return 0;
+	if (close(Server_Socket) < 0)
+	{
+		printf("Error: Server could not be closed. \n");
+	}
 }
