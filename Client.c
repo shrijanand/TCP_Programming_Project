@@ -13,6 +13,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+bool Valid_File_Path(const char* File_Path)
+{
+    FILE* File = fopen(File_Path, "r");
+    bool Valid_File_Path = File != NULL;
+    fclose(File);
+
+    return Valid_File_Path;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -28,6 +37,14 @@ int main(int argc, char const *argv[])
   {
     fprintf(stderr, "Error: Kindly check that Format is not out of range.\n");
     exit(1);
+  }
+
+  const char* File_Path = argv[3];
+
+  if (!Valid_File_Path(File_Path)) 
+  {
+      fprintf(stderr, "Error: Kindly check that the file exists.\n");
+      exit(1);
   }
 
   return 0;
