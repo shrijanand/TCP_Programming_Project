@@ -22,6 +22,93 @@ typedef struct Message_Struct
     unsigned char* Name_of_File;
 }Message_Struct;
 
+uint8_t Get_Transmission_Type(int Socket_File_Descriptor)
+{
+    uint8_t Transmission_Type;
+
+    for (int i = 0; i < sizeof(Transmission_Type); i++)
+    {
+        int Input_Bytes = read(Socket_File_Descriptor, &Transmission_Type, 1);
+
+        if (Input_Bytes < 0)
+        {
+            if (errno == EINTR)
+            {
+                continue;
+            }
+
+            perror(strerror(errno));
+            exit(-1);
+        }
+    }
+
+    return Transmission_Type;
+}
+
+uint64_t Get_File_Size(int Socket_File_Descriptor)
+{
+    uint64_t Size_of_File;
+    int Total_Bytes = sizeof(Size_of_File);
+    int Input_Bytes = 0;
+    uint64_t* Buffer = &Size_of_File;
+
+    while (Input_Bytes < Total_Bytes) 
+    {
+        int Get_Byte  = read(Socket_File_Descriptor, Buffer + Input_Bytes, Total_Bytes - Input_Bytes);
+        Input_Bytes += Get_Byte;
+    }
+    
+    return ntohl(Size_of_File);
+}
+
+unsigned char* Get_File(int Socket_File_Descriptor, uint64_t Size_of_File)
+{
+    unsigned char* File = malloc(Size_of_File + 1);
+    File[Size_of_File] = '\0';
+    int Input_Bytes = 0;
+    unsigned char* Current = File;
+
+    while (Input_Bytes < Size_of_File) 
+    {
+        int Get_Byte  = read(Socket_File_Descriptor, Current + Input_Bytes, Size_of_File - Input_Bytes);
+        Input_Bytes += Get_Byte;
+    }
+
+    return File;
+}
+
+uint16_t Get_Length_of_Name(int Socket_File_Descriptor)
+{
+    uint16_t Length_of_Name;
+    int Input_Bytes = 0;
+    int Total_Bytes = sizeof(Length_of_Name);
+    uint16_t* Buffer = &Length_of_Name;
+
+    while (Input_Bytes < Total_Bytes) 
+    {
+        int Get_Byte  = read(Socket_File_Descriptor, Buffer + Input_Bytes, Total_Bytes - Input_Bytes);
+        Input_Bytes += Get_Byte;
+    }
+
+    return ntohs(Length_of_Name);
+}
+
+char* Get_Name_of_File(int Socket_File_Descriptor, uint16_t Length_of_Name)
+{
+    char* Name_of_File = malloc(Length_of_Name + 1);
+    Name_of_File[Length_of_Name] = '\0';
+    int Input_Bytes = 0;
+   	unsigned char* Current = Name_of_File;
+
+    while (Input_Bytes < Length_of_Name) 
+    {
+        int Get_Byte  = read(Socket_File_Descriptor, Current + Input_Bytes, Length_of_Name - Input_Bytes);
+        Input_Bytes += Get_Byte;
+    }
+
+    return Name_of_File;
+}
+
 Message_Struct Get_Message(int File_Descriptor)
 {
     Message_Struct Message;
