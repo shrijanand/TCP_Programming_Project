@@ -9,12 +9,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
+#include <sys/Client_Socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 // Main function
-int main(int argc, char const *argv[]) 
+int main(int argc, char const *argv[])
 {
-	return 0;
+  if (argc < 6) 
+  {
+    fprintf(stderr, "Error: Kindly check the number of arguments.\n");
+    exit(1);
+  }
+
+  uint8_t Format = atoi(argv[4]);
+
+  if (Format < 0 || Format > 3) 
+  {
+    fprintf(stderr, "Error: Kindly check that Format is not out of range.\n");
+    exit(1);
+  }
+
+  return 0;
 }
