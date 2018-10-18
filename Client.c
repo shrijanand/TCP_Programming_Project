@@ -152,6 +152,16 @@ unsigned char* Read_Response(int File_Descriptor, int Size)
 // Main function
 int main(int argc, char const *argv[])
 {
+  printf("==================================================\n");
+  printf("CS 450: Data Communication and Network Programming\n");
+  printf("              Instructor: Dr. Jiang Li            \n");
+  printf("              TCP Programming Project             \n");
+  printf("             By: Shrijanand Chintapatla           \n");
+  printf("                   @02778807                      \n");
+  printf("==================================================\n");
+  printf("                    CLIENT                        \n");
+  printf("==================================================\n");
+
   if (argc < 6) 
   {
     fprintf(stderr, "Error: Kindly check the number of arguments.\n");
@@ -191,4 +201,6 @@ int main(int argc, char const *argv[])
 
   puts(Response);
   free(Response);
+
+  printf("==================================================\n");
 }
