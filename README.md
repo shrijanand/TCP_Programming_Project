@@ -32,4 +32,8 @@ This README exists for the TCP Programming Project for CSCI 450: Data Communicat
 
 * Tested Server.c and Client.c to communicate w/ each other. 
 * ---- Ran simple tests to have base-level Minimum Viable Product (MVP) Project.
+* Editted Server.c and completed Implementation for V2 of Server. 
+* ---- Editted README.md for TCP_Programming_Project pertaining to Server.
+* Editted Client.c and completed Implementation for V2 of Client. 
+* ---- Editted README.md for TCP_Programming_Project pertaining to Client.
 
