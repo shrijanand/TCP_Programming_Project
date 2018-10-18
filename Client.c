@@ -35,6 +35,38 @@ bool File_Empty(const char* File_Path)
     return Get_File_Size(File_Path) == 0;
 }
 
+int Create_Socket(const char *Server_IP, const char *Server_Port)
+{
+    int Socket_File_Descriptor = 0;
+
+    if ((Socket_File_Descriptor = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        char * Error_Text = strerror(errno);
+        perror(Error_Text);
+        exit(-1);
+    }
+
+    struct sockaddr_in Server_Address;
+    Server_Address.sin_family = AF_INET;
+    Server_Address.sin_port = htons(atoi(Server_Port));
+
+    if (inet_aton(Server_IP, &Server_Address.sin_addr) <= 0)
+    {
+        char * Error_Text = strerror(errno);
+        perror(Error_Text);
+        exit(-1);
+    }
+
+    if ((connect( Socket_File_Descriptor, (struct sockaddr*) &Server_Address, sizeof(Server_Address))) < 0)
+    {
+        char * Error_Text = strerror(errno);
+        perror(Error_Text);
+        exit(-1);
+    }
+
+    return Socket_File_Descriptor;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -65,6 +97,8 @@ int main(int argc, char const *argv[])
       fprintf(stderr, "Error: Kindly check that the file is not empty.\n");
       exit(1);
   }
+
+  int Client_Socket = Create_Socket(argv[1], argv[2]);
 
   return 0;
 }
