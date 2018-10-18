@@ -67,6 +67,15 @@ int Create_Socket(const char *Server_IP, const char *Server_Port)
     return Socket_File_Descriptor;
 }
 
+uint64_t Get_Message_Size(const char* File_Path, const char* File_Name, uint8_t Format)
+{
+    uint64_t File_size = Get_File_Size(File_Path);
+    uint16_t File_Name_Size = strlen(File_Name);
+
+    return sizeof(Format) + sizeof(File_Name_Size) + File_Name_Size
+    + sizeof(File_size) + File_size;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -99,6 +108,8 @@ int main(int argc, char const *argv[])
   }
 
   int Client_Socket = Create_Socket(argv[1], argv[2]);
+
+  uint64_t Message_Size = Get_Message_Size(File_Path, argv[5], Format);
 
   return 0;
 }
