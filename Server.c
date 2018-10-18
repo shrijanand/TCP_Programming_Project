@@ -177,10 +177,38 @@ uint32_t Get_INT32_String(unsigned char* Start_Position, unsigned char* End_Posi
     return Number;
 }
 
+bool Parse_Number(unsigned char* Start_Position, unsigned char* Current_Position)
+{
+    char c = *Current_Position;
+    uint64_t Input_Bytes = Current_Position - Start_Position;
+
+    return !isdigit(c) || Input_Bytes >= 5;
+}
+
+uint8_t Get_Second_Format_Size(unsigned char* Current_Position)
+{
+    unsigned char* Start_Position = Current_Position;
+    while (!Parse_Number(Start_Position, Current_Position))
+    { 
+    	Current_Position++; 
+    }
+
+    return Current_Position - Start_Position;
+}
+
 uint16_t Get_Second_Format_Bytes(unsigned char* Current_Position, unsigned char* File_Stop)
 {
     unsigned char* Line_Position = Current_Position;
     uint32_t Count = Get_INT32_String(Line_Position, Line_Position + 3);
+    Line_Position += 3;
+
+    for (int i = 0; i < Count; i++)
+    {
+        uint8_t Input_Bytes = Get_Second_Format_Size(Line_Position);
+        Line_Position += Input_Bytes;
+
+        Line_Position++;
+    }
 
     return Line_Position - Current_Position;
 }
