@@ -132,6 +132,23 @@ int Write_Socket(int File_Descriptor, void* Data , int Data_Size)
     }
 }
 
+unsigned char* Read_Response(int File_Descriptor, int Size)
+{
+    unsigned char* Response = malloc(Size + 1);
+    Response[Size] = '\0';
+    int Read_Bytes = 0;
+    unsigned char* Current = Response;
+    int Checker = 1;
+
+    while (Checker  > 0) 
+    {
+        Checker  = read(File_Descriptor, Current + Read_Bytes, Size - Read_Bytes);
+        Read_Bytes += Checker;
+    }
+
+    return Response;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -170,6 +187,8 @@ int main(int argc, char const *argv[])
   unsigned char* Message = Create_Message(File_Path, argv[5], Format);
 
   Write_Socket(Client_Socket, Message, Message_Size);
+  char* Response = Read_Response(Client_Socket, 50);
 
-  return 0;
+  puts(Response);
+  free(Response);
 }
