@@ -22,6 +22,19 @@ bool Valid_File_Path(const char* File_Path)
     return Valid_File_Path;
 }
 
+uint64_t Get_File_Size(const char* File_name)
+{
+    struct stat st;
+    stat(File_name, &st);
+
+    return st.st_size;
+}
+
+bool File_Empty(const char* File_Path)
+{
+    return Get_File_Size(File_Path) == 0;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -44,6 +57,12 @@ int main(int argc, char const *argv[])
   if (!Valid_File_Path(File_Path)) 
   {
       fprintf(stderr, "Error: Kindly check that the file exists.\n");
+      exit(1);
+  }
+
+  if (File_Empty(File_Path))
+  {
+      fprintf(stderr, "ERROR, FILE IS EMPTY\n");
       exit(1);
   }
 
