@@ -196,6 +196,16 @@ uint8_t Get_Second_Format_Size(unsigned char* Current_Position)
     return Current_Position - Start_Position;
 }
 
+bool Test_Line_End(unsigned char c)
+{
+    return Check_Valid_Format(c) || c == '\n';
+}
+
+bool Test_Number_End(unsigned char c)
+{
+    return c == ',';
+}
+
 uint16_t Get_Second_Format_Bytes(unsigned char* Current_Position, unsigned char* File_Stop)
 {
     unsigned char* Line_Position = Current_Position;
@@ -206,6 +216,16 @@ uint16_t Get_Second_Format_Bytes(unsigned char* Current_Position, unsigned char*
     {
         uint8_t Input_Bytes = Get_Second_Format_Size(Line_Position);
         Line_Position += Input_Bytes;
+
+        if (Test_Line_End(*Line_Position))
+        { 
+        	break; 
+        }
+
+        if (!Test_Number_End(*Line_Position))
+        { 
+        	return -1; 
+        }
 
         Line_Position++;
     }
