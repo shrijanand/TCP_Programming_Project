@@ -76,6 +76,39 @@ uint64_t Get_Message_Size(const char* File_Path, const char* File_Name, uint8_t 
     + sizeof(File_size) + File_size;
 }
 
+unsigned char* Create_Message(const char* File_Path, const char* File_Name, uint8_t Format)
+{
+    uint64_t Message_Size = Get_Message_Size(File_Path, File_Name, Format);
+
+    unsigned char* Message = malloc(Message_Size);
+    unsigned char* Current_Position = Message;
+
+    memcpy(Current_Position++, &Format, sizeof(Format));
+
+    uint64_t File_size = Get_File_Size(File_Path);
+    File_size = htonl(File_size);
+
+    memcpy(Current_Position, &File_size, sizeof(File_size));
+
+    File_size = ntohl(File_size);
+    Current_Position += sizeof(File_size);
+    FILE* File = fopen(File_Path, "rb");
+    Current_Position += fread(Current_Position, sizeof(char), File_size, File);
+    fclose(File);
+
+    uint16_t to_name_size = strlen(File_Name);
+    to_name_size = htons(to_name_size);
+
+    memcpy(Current_Position, &to_name_size, sizeof(to_name_size));
+
+    to_name_size = ntohs(to_name_size);
+    Current_Position += sizeof(to_name_size);
+
+    memcpy(Current_Position, File_Name, to_name_size);
+
+    return Message;
+}
+
 // Main function
 int main(int argc, char const *argv[])
 {
@@ -110,6 +143,8 @@ int main(int argc, char const *argv[])
   int Client_Socket = Create_Socket(argv[1], argv[2]);
 
   uint64_t Message_Size = Get_Message_Size(File_Path, argv[5], Format);
+
+  unsigned char* Message = Create_Message(File_Path, argv[5], Format);
 
   return 0;
 }
