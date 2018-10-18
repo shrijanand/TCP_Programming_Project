@@ -152,6 +152,39 @@ bool Check_Valid_Format(unsigned char Format_Type)
     return Format_Type == 0 || Format_Type == 1;
 }
 
+uint16_t Get_First_Format_Size(uint8_t Count)
+{
+    return  sizeof(Count) + Count * 2;
+}
+
+uint16_t Get_First_Format_Bytes(unsigned char* Current_Position, unsigned char* File_Stop)
+{
+    uint8_t Count = *Current_Position;
+    unsigned char* End_of_Line = Current_Position + Get_First_Format_Size(Count);
+
+    return (End_of_Line > File_Stop) ? -1 : (End_of_Line - Current_Position);
+}
+
+uint32_t Get_INT32_String(unsigned char* Start_Position, unsigned char* End_Position)
+{
+    uint8_t Count_Characters = End_Position - Start_Position;
+    char* INT32_String = malloc(Count_Characters + 1);
+    INT32_String[Count_Characters] = '\0';
+    memcpy(INT32_String, Start_Position, Count_Characters);
+    uint32_t Number =  atoi(INT32_String);
+    free(INT32_String);
+
+    return Number;
+}
+
+uint16_t Get_Second_Format_Bytes(unsigned char* Current_Position, unsigned char* File_Stop)
+{
+    unsigned char* Line_Position = Current_Position;
+    uint32_t Count = Get_INT32_String(Line_Position, Line_Position + 3);
+
+    return Line_Position - Current_Position;
+}
+
 bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
 {
     while (Current_Position < End_Position) 
@@ -162,7 +195,17 @@ bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
         { 
         	return false; 
         }
-        
+
+        int16_t Input_Bytes = (Format_Type == 0) ?
+                             Get_First_Format_Bytes(Current_Position, End_Position) :
+                             Get_Second_Format_Bytes(Current_Position, End_Position) ;
+
+        if (Input_Bytes == -1) 
+        { 
+        	return false; 
+        }
+
+        Current_Position += Input_Bytes;
     }
 
     return Current_Position == End_Position;
