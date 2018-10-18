@@ -34,7 +34,7 @@ Message_Struct Get_Message(int File_Descriptor)
 }
 
 // Main function
-int main(int Argument_Count, char *Argument_Values[]) 
+int main(int argc, char *argv[]) 
 {
 	return 0;
 }
