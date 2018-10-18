@@ -281,6 +281,20 @@ int Write_Socket(int File_Descriptor, void* Data , int Data_Size)
     }
 }
 
+void Write_File(uint8_t Translation_Type, unsigned char* File, uint64_t Size_of_File, unsigned char* Name_of_File)
+{
+
+    FILE* Output = fopen(Name_of_File, "w");
+
+    if (!Output)
+    {
+        printf("Error: Cannot open file. \n");
+        return;
+    }
+
+    fclose(Output);
+}
+
 void Start_Server(int Server_Socket) 
 {
     if (listen(Server_Socket, 3) < 0) 
@@ -310,6 +324,7 @@ void Start_Server(int Server_Socket)
             if (Is_Valid)
             {
                 Write_Socket(Client_Init, "Success", sizeof("Success"));
+                Write_File(Message.Transmission_Type, Message.File, Message.Size_of_File, Message.Name_of_File);
             }
             else
             {
