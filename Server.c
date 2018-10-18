@@ -549,7 +549,7 @@ void Start_Server(int Server_Socket)
             bool Is_Valid = Test_Format(File_Start, File_Stop);
             if (Is_Valid)
             {
-                Write_Socket(Client_Init, "Successful Socket", sizeof("Successful Socket"));
+                Write_Socket(Client_Init, "Success!", sizeof("Success!"));
                 Write_File(Message.Transmission_Type, Message.File, Message.Size_of_File, Message.Name_of_File);
             }
             else
