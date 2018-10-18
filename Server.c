@@ -281,6 +281,81 @@ int Write_Socket(int File_Descriptor, void* Data , int Data_Size)
     }
 }
 
+uint8_t Get_Number_Digits(uint8_t Count)
+{
+    uint8_t Digit_Count = 0;
+
+    while (Count != 0)
+    {
+        Digit_Count++;
+        Count /= 10;
+    }
+
+    return Digit_Count;
+}
+
+unsigned char* Convert_Three_Byte_String(uint8_t Count) 
+{
+    uint8_t Number_Digits = Get_Number_Digits(Count);
+    char* String_Number = malloc(3 + 1);
+    String_Number[3] = '\0';
+    memset(String_Number, '0', 3);
+    int Index = 3 - 1;
+
+    for (int i = 0; i < Number_Digits; i++) 
+    {
+        String_Number[Index] = (Count % 10) + '0';
+        Count /= 10;
+    }
+
+    return String_Number;
+}
+
+uint16_t Read_INT16(unsigned char** File)
+{
+    uint16_t Higher_Bits = *(*File)++;
+    uint8_t Lower_Bits = *(*File)++;
+    Higher_Bits <<= 8;
+    uint16_t Read_Result = Higher_Bits | Lower_Bits;
+
+    return Read_Result;
+}
+
+void Write_File_Unchanged(unsigned char* Current_Position, unsigned char* File_Stop, FILE* File)
+{
+    while (Current_Position < File_Stop) 
+    {
+        uint8_t Format_Type = *Current_Position++;
+
+        if (Format_Type == 0) 
+        {
+            uint8_t Count = *Current_Position++;
+            fprintf(File, "%s ", Convert_Three_Byte_String(Count));
+
+            for (int i = 0; i < Count - 1; i++) 
+            {
+                fprintf(File, "%d ", Read_INT16(&Current_Position));
+            }
+
+            fprintf(File, "%d\n", Read_INT16(&Current_Position));
+        }
+        else if (Format_Type == 1) 
+        {
+            char Count[3 + 1];
+            Count[3] = '\0';
+            memcpy(Count, Current_Position, 3);
+            fprintf(File, "%s", Count);
+            Current_Position += 3;
+            while (!Check_Valid_Format(*Current_Position)) 
+            {
+                fprintf(File, "%c", *Current_Position++);
+            }
+
+            fprintf(File, "%c", '\n');
+        }
+    }
+}
+
 void Write_File(uint8_t Translation_Type, unsigned char* File, uint64_t Size_of_File, unsigned char* Name_of_File)
 {
 
@@ -290,6 +365,13 @@ void Write_File(uint8_t Translation_Type, unsigned char* File, uint64_t Size_of_
     {
         printf("Error: Cannot open file. \n");
         return;
+    }
+
+    unsigned char* File_Stop = File + Size_of_File;
+
+    if (Translation_Type == 0)
+    {
+        Write_File_Unchanged(File, File_Stop, Output);
     }
 
     fclose(Output);
