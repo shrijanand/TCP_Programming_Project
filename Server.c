@@ -98,7 +98,7 @@ char* Get_Name_of_File(int Socket_File_Descriptor, uint16_t Length_of_Name)
     char* Name_of_File = malloc(Length_of_Name + 1);
     Name_of_File[Length_of_Name] = '\0';
     int Input_Bytes = 0;
-   	unsigned char* Current = Name_of_File;
+    unsigned char* Current = Name_of_File;
 
     while (Input_Bytes < Length_of_Name) 
     {
@@ -190,7 +190,7 @@ uint8_t Get_Second_Format_Size(unsigned char* Current_Position)
     unsigned char* Start_Position = Current_Position;
     while (!Parse_Number(Start_Position, Current_Position))
     { 
-    	Current_Position++; 
+        Current_Position++; 
     }
 
     return Current_Position - Start_Position;
@@ -219,12 +219,12 @@ uint16_t Get_Second_Format_Bytes(unsigned char* Current_Position, unsigned char*
 
         if (Test_Line_End(*Line_Position))
         { 
-        	break; 
+            break; 
         }
 
         if (!Test_Number_End(*Line_Position))
         { 
-        	return -1; 
+            return -1; 
         }
 
         Line_Position++;
@@ -241,7 +241,7 @@ bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
 
         if (!Check_Valid_Format(Format_Type)) 
         { 
-        	return false; 
+            return false; 
         }
 
         int16_t Input_Bytes = (Format_Type == 0) ?
@@ -250,7 +250,7 @@ bool Test_Format(unsigned char* Current_Position, unsigned char* End_Position)
 
         if (Input_Bytes == -1) 
         { 
-        	return false; 
+            return false; 
         }
 
         Current_Position += Input_Bytes;
@@ -569,18 +569,32 @@ void Start_Server(int Server_Socket)
 // Main function
 int main(int argc, char *argv[]) 
 {
-	if (argc < 2)
-	{
-		fprintf(stderr, "Error: Kindly check that a port is provided. \n");
-		exit(1);
-	}
+    printf("==================================================\n");
+    printf("CS 450: Data Communication and Network Programming\n");
+    printf("              Instructor: Dr. Jiang Li            \n");
+    printf("              TCP Programming Project             \n");
+    printf("             By: Shrijanand Chintapatla           \n");
+    printf("                   @02778807                      \n");
+    printf("==================================================\n");
+    printf("                    SERVER                        \n");
+    printf("==================================================\n");
 
-	int Server_Socket = Create_Server(atoi(argv[1]));
-	
-	Start_Server(Server_Socket);
+    if (argc < 2)
+    {
+        fprintf(stderr, "Error: Kindly check that a port is provided. \n");
+        exit(1);
+    }
 
-	if (close(Server_Socket) < 0)
-	{
-		printf("Error: Server could not be closed. \n");
-	}
+    int Server_Socket = Create_Server(atoi(argv[1]));
+
+    printf("\n   ... Created Server. Waiting for Client ...   \n");
+    
+    Start_Server(Server_Socket);
+
+    if (close(Server_Socket) < 0)
+    {
+        printf("Error: Server could not be closed. \n");
+    }
+
+    printf("==================================================\n");
 }
