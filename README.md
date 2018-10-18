@@ -16,7 +16,9 @@ This README exists for the TCP Programming Project for CSCI 450: Data Communicat
 * Included necessary Libraries to Server.c and Client.c 
 * ---- Added editted Server.c and Client.c Source Code Files to Repo.
 * Editted README.md for Libraries and Main Function
-* ---- Editted README.md for TCP_Programming_Project. Working on MVP Commit.
+* ---- Editted README.md for TCP_Programming_Project.
+* Editted Server.c and completed Implementation for V1 of Server. 
+* ---- Editted README.md for TCP_Programming_Project pertaining to Server.
 
 ### Placeholder Title ###
 * Placeholder Content
